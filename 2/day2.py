@@ -33,3 +33,23 @@ for boxID in boxIDs:
     
 checksum = sum2 * sum3
 print(checksum)
+
+dif = 0
+for boxID in boxIDs:
+    if dif == 1:
+        break
+    for comparison in boxIDs:
+        if boxID != comparison:
+            dif = 0
+            for a,b in zip(boxID,comparison):
+                if a != b:
+                    dif += 1
+
+            if dif == 1:
+                output = ''
+                for a,b in zip(boxID,comparison):
+                    if a == b:
+                        output = output + a
+                print(output)
+                break
+                
