@@ -2,7 +2,7 @@ import os, csv
 
 # Read Input from File
 adjustments = []
-with open(os.path.join(os.getcwd(),'input')) as file:
+with open(os.path.join(os.getcwd(),'myinput')) as file:
     data = csv.reader(file)
     for row in data:
         adjustments.append(int(row[0]))
