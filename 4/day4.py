@@ -88,4 +88,20 @@ for entry in log:
             guards[guard_id]['sleeptime'] = sleeptime
             guards[guard_id]['minutes'] = minutes
 
+max_minute = (0,0)
+for i in range(60):
+    minute_count = 0
+    max_id = 0
+    for guard_id in guards:
+        try:
+            if guards[guard_id]['minutes'][str(i)] > minute_count:
+                minute_count = guards[guard_id]['minutes'][str(i)]
+                max_id = guard_id
+        except:
+            break    
+    print(f'Minute {i} guard {max_id}')
+    if minute_count > max_minute[1]:
+        max_minute = (i,minute_count)
+        
+print(f'Max Minute: {max_minute}')
 print('End!')
