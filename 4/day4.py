@@ -51,7 +51,7 @@ for entry in log:
             if regex.search(entry['event']):
                 t2 = entry['timestamp']
         
-            sleeptime = t2 - t1 
+            sleeptime += (t2 - t1) 
             start = t1.minute
             stop = t2.minute
 
