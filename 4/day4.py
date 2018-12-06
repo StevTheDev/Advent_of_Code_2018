@@ -2,6 +2,7 @@ import os, csv, re
 from datetime import datetime, timedelta
 from more_itertools import peekable
 
+# Regex used when parsing input
 timestamp_regex = r'\[\d\d\d\d-\d\d-\d\d \d\d:\d\d\] '
 event_regex = {
     'guard':r'\d{3,4}', # Guard ID Number
@@ -22,24 +23,21 @@ with open(os.path.join(os.getcwd(),'4','input')) as file:
         event = re.sub(timestamp_regex,'',row[0]) # Remove timestamp from string
         
         log.append({'timestamp':timestamp,'event':event})
-        #print(f'{timestamp} {event}')
 
-log.sort(key=lambda x:x['timestamp'])
-log = peekable(log) # Used to look ahead while reading later
-
+log.sort(key=lambda x:x['timestamp']) # Chronological Sort
+log = peekable(log) # So we can look ahead later
 
 # Analyze Log and Record Guard Information 
-guards = {}
+guards = {} # Key - Guard ID
 
 for entry in log:
-    #print(f"{entry['timestamp']} {entry['event']}")
-    
+
     guard_regex = re.compile(event_regex['guard'])
     if guard_regex.search(entry['event']):
         guard_id = guard_regex.search(entry['event']).group()
 
         # Record total sleep time with a timedelta object
-        # Record the minutes slept in a dictionary
+        # Record the minutes slept on in a dictionary
         sleeptime = timedelta(minutes=0)
         minutes = {}
 
@@ -47,32 +45,37 @@ for entry in log:
         while not guard_regex.search(peek['event']):
 
             ''' Read two lines of input assuming they contain a sleep/wake pair.
-            Of course we verified this pattern exists in the sorted log :wink:'''
+            The pattern was verified in the sorted log to support the assumption
+            Broken pairs are skipped over
+            '''
 
             t1 = t2 = None # Zero out the clocks
                
-            entry = log.next()
             regex = re.compile(event_regex['sleep'])
-            if regex.search(entry['event']):
+            peek = log.peek()
+            if regex.search(peek['event']):
+                entry = log.next()
                 t1 = entry['timestamp']
-
-            entry = log.next()
+            
             regex = re.compile(event_regex['wake'])
-            if regex.search(entry['event']):
+            peek = log.peek()
+            if regex.search(peek['event']):
+                entry = log.next()
                 t2 = entry['timestamp']
         
-            sleeptime += (t2 - t1) 
+            if t1 and t2: # If sleep/wake pair was read successfully 
+                sleeptime += (t2 - t1) 
 
-            # Record Minute-to-Minute Statistics  
-            start = t1.minute # minute of snoozin
-            stop = t2.minute # minute of wakeup
+                # Record Minute-to-Minute Statistics  
+                start = t1.minute # minute of snoozin
+                stop = t2.minute # minute of wakeup
 
-            for minute in range(start,stop): # start to (stop-1) remember
-                minute = str(minute)
-                if minute not in minutes:
-                    minutes[minute] = 1
-                else:
-                    minutes[minute] += 1
+                for minute in range(start,stop): # start to (stop-1) remember
+                    minute = str(minute)
+                    if minute not in minutes:
+                        minutes[minute] = 1
+                    else:
+                        minutes[minute] += 1
 
             try:
                 peek = log.peek()
@@ -96,20 +99,20 @@ for entry in log:
             for minute in minutes:
                 if minute in guard['minutes']:
                     minute_counter = guard['minutes'][minute]
-                    minute_counter = minute_counter + minutes[minute]
-                    guard['minutes'][minute] = minute_counter
+                    guard['minutes'][minute] = minute_counter + minutes[minute]
                 else:
                     guard['minutes'][minute] = minutes[minute]
 
 
-# Part 1 Answer
+# Part 1
 guard_id = max(guards, key=lambda x: guards[x]['sleeptime'])
 guard = guards[guard_id]
 minute = max(guard['minutes'], key=lambda x: guard['minutes'][x])
-print(f'Best bet is at 00:{minute} while guard #{guard_id} is on duty.')
+count = guard['minutes'][minute]
+best_chance = (int(guard_id),int(minute),count) 
 
 # Part 2
-second_chance = (0,0,0)
+second_chance = (0,0,0) # guard id, minute, count
 for minute in range(60):
     minute = str(minute)
 
@@ -126,7 +129,12 @@ for minute in range(60):
             continue # Meaning this guard was never asleep at this time
 
     if sleeping_record > second_chance[2]:
-        second_chance = (record_holder,int(minute),sleeping_record)
+        second_chance = (int(record_holder),int(minute),sleeping_record)
 
-# Part 2 Answer
-print(f'Second option would be at 00:{second_chance[1]} while guard #{second_chance[0]} is on duty.')
+# Results
+print(f'Best bet is at 00:{best_chance[1]} while guard #{best_chance[0]} is on duty. They were seen snoozing then {best_chance[2]} times.')
+print(f'Second option would be at 00:{second_chance[1]} while guard #{second_chance[0]} is on duty. They were seen snoozing then {second_chance[2]} times.')
+
+# Advent of Code Answer Submissions:
+print(f'AoC Answer 1: {best_chance[0]*best_chance[1]}')
+print(f'AoC Answer 2: {second_chance[0]*second_chance[1]}')
