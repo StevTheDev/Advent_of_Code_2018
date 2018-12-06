@@ -10,8 +10,9 @@ event_regex = {
     'wake':r'wakes up',  
 }
 
+
 # Read Input
-with open(os.path.join(os.getcwd(),'4','input')) as file:
+with open(os.path.join(os.getcwd(),'input')) as file:
     data = csv.reader(file)
     
     log = []
@@ -24,11 +25,11 @@ with open(os.path.join(os.getcwd(),'4','input')) as file:
         
         log.append({'timestamp':timestamp,'event':event})
 
-log.sort(key=lambda x:x['timestamp']) # Chronological Sort
-log = peekable(log) # So we can look ahead later
 
 # Analyze Log and Record Guard Information 
-guards = {} # Key - Guard ID
+guards = {} # Keys will be Guard IDs
+log.sort(key=lambda x:x['timestamp']) # Chronological Sort
+log = peekable(log) # So we can look ahead later
 
 for entry in log:
 
@@ -46,7 +47,7 @@ for entry in log:
 
             ''' Read two lines of input assuming they contain a sleep/wake pair.
             The pattern was verified in the sorted log to support the assumption
-            Broken pairs are skipped over
+            Broken pairs are skipped over if encountered.
             '''
 
             t1 = t2 = None # Zero out the clocks
@@ -71,12 +72,12 @@ for entry in log:
                 stop = t2.minute # minute of wakeup
 
                 for minute in range(start,stop): # start to (stop-1) remember
-                    minute = str(minute)
+                    minute = str(minute) # To be used as lookup key
                     if minute not in minutes:
                         minutes[minute] = 1
                     else:
                         minutes[minute] += 1
-
+            
             try:
                 peek = log.peek()
             except: # End of File
@@ -97,11 +98,11 @@ for entry in log:
             guard['sleeptime'] = sleep_counter + sleeptime 
             
             for minute in minutes:
-                if minute in guard['minutes']:
+                if minute not in guard['minutes']:
+                    guard['minutes'][minute] = minutes[minute]
+                else:
                     minute_counter = guard['minutes'][minute]
                     guard['minutes'][minute] = minute_counter + minutes[minute]
-                else:
-                    guard['minutes'][minute] = minutes[minute]
 
 
 # Part 1
@@ -109,12 +110,12 @@ guard_id = max(guards, key=lambda x: guards[x]['sleeptime'])
 guard = guards[guard_id]
 minute = max(guard['minutes'], key=lambda x: guard['minutes'][x])
 count = guard['minutes'][minute]
-best_chance = (int(guard_id),int(minute),count) 
+best_chance = (int(guard_id),int(minute),count) # Doing math with the ints later
 
 # Part 2
 second_chance = (0,0,0) # guard id, minute, count
 for minute in range(60):
-    minute = str(minute)
+    minute = str(minute) # To be used as lookup key
 
     sleeping_record = 0
     record_holder = 0
@@ -125,16 +126,20 @@ for minute in range(60):
             if guard['minutes'][minute] > sleeping_record:
                 sleeping_record = guard['minutes'][minute]
                 record_holder = guard_id
+
         except: # guard['minutes'][minute] does not exist 
             continue # Meaning this guard was never asleep at this time
 
     if sleeping_record > second_chance[2]:
         second_chance = (int(record_holder),int(minute),sleeping_record)
 
+
 # Results
 print(f'Best bet is at 00:{best_chance[1]} while guard #{best_chance[0]} is on duty. They were seen snoozing then {best_chance[2]} times.')
 print(f'Second option would be at 00:{second_chance[1]} while guard #{second_chance[0]} is on duty. They were seen snoozing then {second_chance[2]} times.')
 
 # Advent of Code Answer Submissions:
-print(f'AoC Answer 1: {best_chance[0]*best_chance[1]}')
-print(f'AoC Answer 2: {second_chance[0]*second_chance[1]}')
+print(f'AoC Answer 1: {best_chance[0] * best_chance[1]}')
+print(f'AoC Answer 2: {second_chance[0] * second_chance[1]}')
+
+# Solution By Steven Fitzpatrick stevthedev.com
