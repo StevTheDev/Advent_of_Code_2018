@@ -17,4 +17,4 @@ def collapse(s):
 
 s = open(os.path.join(os.getcwd(),'5','input')).read().strip()
 print(collapse(s))
-#print(min(collapse(c for c in s if c.lower() != x) for x in ascii_lowercase))
+print(min(collapse(c for c in s if c.lower() != x) for x in ascii_lowercase))
