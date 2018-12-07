@@ -24,7 +24,6 @@ data = open(os.path.join(os.getcwd(),'5','input')).read().strip()
 length = len(quick_trim(data))
 print(f'Reduction Complete. Resulting Polymer Length:{length}')
 
-'''
 # Part 2:
 shortest = len(data) # Start at Maximum length. Then reduce based on results 
 shortest_keys = () # Record the Keys which when purged give the shortest result
@@ -38,4 +37,3 @@ for key in range(65,91): # A - Z Uppercase Ascii
         shortest_keys = keys
 
 print(f'Purge {shortest_keys[0]}/{shortest_keys[1]} for Minimum Resulting Polymer Length: {shortest}')
-'''
