@@ -36,4 +36,5 @@ for key in range(65,91): # A - Z Uppercase Ascii
         shortest = length
         shortest_keys = keys
 
-print(f'Purge {shortest_keys[0]}/{shortest_keys[1]} for Minimum Resulting Polymer Length: {shortest}')
+print(f'Purge {shortest_keys[0]}/{shortest_keys[1]} 
+        for Minimum Resulting Polymer Length: {shortest}')
