@@ -1,11 +1,8 @@
-import os, csv
+import os
 
 # Read Input from File
-adjustments = []
-with open(os.path.join(os.getcwd(),'myinput')) as file:
-    data = csv.reader(file)
-    for row in data:
-        adjustments.append(int(row[0]))
+input_path = os.path.join(os.getcwd(),'input.txt')
+adjustments = [int(line) for line in open(input_path).readlines()]
 
 # 1: End Frequency
 freq = 0
@@ -15,17 +12,16 @@ print(freq) # Answer 1
 
 # 2: First Frequency Seen Twice
 freq = 0
-seen = []
-pairs = []
+seen = set()
+duplicates = set()
 
-while not pairs:
+while not duplicates:
     for number in adjustments:
         freq += number
         if freq in seen:
-            if freq not in pairs:
-                pairs.append(freq)
+            if freq not in duplicates:
+                duplicates.add(freq)
+                print(freq)
                 break
         else:
-            seen.append(freq)
-
-print(pairs[0]) # Answer 2
+            seen.add(freq)
