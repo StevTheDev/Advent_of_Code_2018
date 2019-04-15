@@ -1,5 +1,9 @@
 # [**Advent of Code 2018**](https://adventofcode.com/2018)
 
+| Overall Completion |
+| :-: |
+| **25**/50 |
+
 The "[Advent of Code,](https://adventofcode.com/)" a series of challenges authored by [Eric Wastl](http://was.tl/) is a set of 25 festive two-part problems are given throughout the month of December. Each day people from around the globe gather and compete [for the fastest submission times](https://adventofcode.com/2018/leaderboard). While I may try to be competitive in 2019, I'm using the 2018 series of problems as a means to practice the programming concepts I learned in college. The past few years since college I wasn't programming much, but I've found python to be a fantastic language to return to.
 
 Eric put a lot of work into designing these problems and *authored* really is the right word. So I won't share his work (the problem text) in this repo. There's a link to each problem in it's day's README.md file.
