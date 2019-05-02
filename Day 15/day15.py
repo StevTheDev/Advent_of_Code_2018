@@ -134,24 +134,27 @@ class Battleground:
                 available_moves = self.get_available_moves(position)
                 for move in available_moves:
                     if move not in searched and move not in search_set:
+                        # add move to search deque with parent as current step
                         search_deque.append({
                             'position': move,
                             'parent_step': step_id,
                         })
                         search_set.add(move) 
                 
+                # Add current step to search deque then remove pos from set
                 searched[position] = {
                     'step_id': step_id,
                     'parent': parent_step,
                 }
                 search_set.discard(position)
 
+                # If the ending position is found, exit the loop
                 if position == end:
                     return searched, step_id
-                
-                step_id += 1
+                else:
+                    step_id += 1
 
-            else: # No Path Found
+            else: # Deque is empty. No Path Found
                 return [], 0
             
         searched, end_step = breadth_first_search(start, end)
